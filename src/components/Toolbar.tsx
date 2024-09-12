@@ -1,11 +1,13 @@
 import { Button } from "antd";
-import { useFileState } from "../store/stores";
+import { useFileState, useScaleState } from "../store/stores";
 import useEvents from "../hooks/useEvents";
+import "./toolbar.css";
 
 export default function Toolbar() {
 
-  const setFile = useFileState(state => state.setFile);
+  const { file, setFile } = useFileState(state => state);
   const { emit } = useEvents();
+  const setScale = useScaleState(state => state.setScale);
 
   const importImage = () => {
     const fileInput = document.createElement('input');
@@ -19,14 +21,21 @@ export default function Toolbar() {
     fileInput.click();
   }
 
-  const exportImage = () => {
-    emit('export');
-  }
-
   return (
     <div className="toolbar">
-      <Button onClick={importImage}>导入图片</Button>
-      <Button onClick={exportImage}>导出图片</Button>
+      <Button onClick={importImage}>Import Image</Button>
+      <Button disabled={!file} onClick={() => {
+        emit('export');
+      }}>Export Image</Button>
+      <Button disabled={!file} onClick={() => {
+        emit('clear');
+      }}>Clear</Button>
+      <Button disabled={!file} onClick={() => {
+        setScale(2);
+      }}>Zoom In</Button>
+      <Button disabled={!file} onClick={() => {
+        setScale(0.5);
+      }}>Zoom Out</Button>
     </div>
   )
 }

@@ -2,7 +2,21 @@ body, html {
   height: 100%;
   width: 100%;
   margin: 0;
+
+  --toolbar-height: 3rem;
+  --margin: 1rem;
 }
+body.eraser {
+  cursor: url('./assets/eraser.png') 5 10, pointer;
+}
+body.colorPicker {
+  cursor: crosshair;
+}
+
+body.move {
+  cursor: move;
+}
+
 
 #root {
   height: 100%;
@@ -12,6 +26,7 @@ body, html {
 }
 
 .workshop {
+  max-height: calc(100% - var(--toolbar-height) - var(--margin) * 4);
   display: flex;
   flex-direction: row;
   justify-content: stretch;

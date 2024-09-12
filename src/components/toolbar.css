@@ -1,0 +1,8 @@
+.toolbar {
+  padding: 1rem;
+  height: var(--toolbar-height);
+  border: 1px solid slateblue;
+  display: flex;
+  gap: 1rem;
+  margin: 1rem;
+}

@@ -1,6 +1,10 @@
 .tools {
   flex: 0 0 10rem;
-  border: 1px solid rgb(92, 117, 139);
+  border: 1px solid slateblue;
+  display: flex;
+  justify-content: stretch;
+  gap: 1rem;
+  flex-direction: column;
 }
 
 .tool-item {
@@ -10,7 +14,7 @@
 }
 
 .picked-color {
-  border: 1px solid #000;
+  border: 1px solid slateblue;
   width: 2rem;
   height: 1rem;
 }
