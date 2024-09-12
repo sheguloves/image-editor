@@ -7,11 +7,6 @@
   margin: 1rem;
 }
 
-.tools {
-  flex: 0 0 10rem;
-  border: 1px solid rgb(92, 117, 139);
-}
-
 .canvas {
   flex: 1 1 auto;
   background-color: beige;

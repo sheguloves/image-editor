@@ -12,12 +12,16 @@
   "license": "ISC",
   "dependencies": {
     "antd": "^5.20.6",
+    "events": "^3.3.0",
+    "file-saver": "^2.0.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zustand": "^4.5.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.10.0",
+    "@types/events": "^3.0.3",
+    "@types/file-saver": "^2.0.7",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",

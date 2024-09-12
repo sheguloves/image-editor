@@ -1,9 +1,11 @@
 import { Button } from "antd";
-import { useFileStore } from "../store/fileStore";
+import { useFileState } from "../store/stores";
+import useEvents from "../hooks/useEvents";
 
 export default function Toolbar() {
 
-  const setFile = useFileStore(state => state.setFile);
+  const setFile = useFileState(state => state.setFile);
+  const { emit } = useEvents();
 
   const importImage = () => {
     const fileInput = document.createElement('input');
@@ -17,9 +19,14 @@ export default function Toolbar() {
     fileInput.click();
   }
 
+  const exportImage = () => {
+    emit('export');
+  }
+
   return (
     <div className="toolbar">
       <Button onClick={importImage}>导入图片</Button>
+      <Button onClick={exportImage}>导出图片</Button>
     </div>
   )
 }

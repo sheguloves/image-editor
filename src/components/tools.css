@@ -1,0 +1,22 @@
+.tools {
+  flex: 0 0 10rem;
+  border: 1px solid rgb(92, 117, 139);
+}
+
+.tool-item {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.picked-color {
+  border: 1px solid #000;
+  width: 2rem;
+  height: 1rem;
+}
+
+.eraser-size {
+  height: .3rem;
+  width: 1rem;
+  background-color: #000;
+}
