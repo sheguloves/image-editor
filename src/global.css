@@ -1,0 +1,21 @@
+body, html {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.workshop {
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  flex: 1 1 auto;
+  gap: 1rem;
+  margin: 0 1rem 1rem;
+}
