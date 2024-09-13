@@ -1,13 +1,11 @@
 import { Button } from "antd";
 import { OperationType, useFileState, useOperationState, usePickedColorState } from "../store/stores";
-import useCursor from "../hooks/useCursor";
 import "./tools.css";
 import { useRef } from "react";
 
 export default function Tools() {
 
-  useCursor();
-  const setOperation = useOperationState(state => state.setOperation);
+  const { operation, setOperation } = useOperationState(state => state);
   const color = usePickedColorState(state => state.color);
   const colorRef = useRef(null);
   const file = useFileState(state => state.file);
@@ -21,21 +19,21 @@ export default function Tools() {
   return (
     <fieldset className="tools" disabled={!file}>
       <div className="tool-item">
-        <Button onClick={handler('move')}>Move</Button>
+        <Button className={operation === 'move' ? 'operation-active': ''} onClick={handler('move')}>Move</Button>
       </div>
       <div className="tool-item">
-        <Button onClick={handler('colorPicker')}>Pick Color</Button>
+        <Button className={operation === 'colorPicker' ? 'operation-active': ''} onClick={handler('colorPicker')}>Pick Color</Button>
         <div ref={colorRef} className="picked-color" style={{
           backgroundColor: color,
         }}></div>
       </div>
       <div className="tool-item">
-        <Button onClick={handler('eraser')}>Eraser</Button>
+        <Button className={operation === 'eraser' ? 'operation-active': ''} onClick={handler('eraser')}>Eraser</Button>
         <div ref={colorRef} className="eraser-size"></div>
       </div>
       <div className="tool-item">
-        <Button onClick={handler('align')}>Eraser</Button>
-        <div ref={colorRef} className="eraser-size"></div>
+        <Button className={operation === 'align' ? 'operation-active': ''} onClick={handler('align')}>Align</Button>
+        <div ref={colorRef} className="align"></div>
       </div>
     </fieldset>
   )

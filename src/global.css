@@ -6,17 +6,6 @@ body, html {
   --toolbar-height: 3rem;
   --margin: 1rem;
 }
-body.eraser {
-  cursor: url('./assets/eraser.png') 5 10, pointer;
-}
-body.colorPicker {
-  cursor: crosshair;
-}
-
-body.move {
-  cursor: move;
-}
-
 
 #root {
   height: 100%;

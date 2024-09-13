@@ -13,6 +13,17 @@
   position: absolute;
 }
 
+.eraser {
+  cursor: url('../assets/eraser.png') 5 10, pointer;
+}
+.colorPicker {
+  cursor: crosshair;
+}
+
+.move {
+  cursor: move;
+}
+
 /* .canvas image {
   height: 50%;
   width: 50%;

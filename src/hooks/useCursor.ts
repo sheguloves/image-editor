@@ -7,11 +7,14 @@ const cursorClasses = [
   'move',
 ]
 
-export default function useCursor(dom: HTMLElement = document.body) {
+export default function useCursor(domRef: React.MutableRefObject<HTMLElement | null>) {
 
   const { operation, setOperation } = useOperationState(state => state);
 
   useEffect(() => {
+    if (!domRef.current) {
+      return;
+    }
     let cursorClass = 'move';
     switch(operation) {
       case 'colorPicker':
@@ -20,11 +23,14 @@ export default function useCursor(dom: HTMLElement = document.body) {
       case 'eraser':
         cursorClass = 'eraser';
         break;
+      case 'align':
+        cursorClass = '';
+        break;
       default:
         cursorClass = 'move';
-        break
+        break;
     }
-
+    const dom = domRef.current;
     const classList = cursorClasses.filter(item => item !== cursorClass);
     dom.classList.remove(...classList);
     if (cursorClass) {

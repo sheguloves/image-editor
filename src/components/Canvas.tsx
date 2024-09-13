@@ -4,23 +4,25 @@ import useOperation from "../hooks/useOperation";
 import useEvents from "../hooks/useEvents";
 import { saveAs } from 'file-saver';
 import "./canvas.css";
-import { getExtendImageData } from "../utils/utils";
+import { getCanvas, getCtx, getExtendImageData } from "../utils/utils";
+import useCursor from "../hooks/useCursor";
 
 export default function Canvas() {
 
   const { file, setFile } = useFileState(state => state);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const backupCanvasRef = useRef<HTMLCanvasElement>(null);
-  const zoomRef = useRef<HTMLDivElement>(null);
+  const operationLayerRef = useRef<HTMLDivElement>(null);
   const { on, off } = useEvents();
 
   const scale = useScaleState(state => state.scale);
 
   useOperation(canvasRef);
+  useCursor(operationLayerRef);
 
   useEffect(() => {
     const clearHandler = () => {
-      const zoomDom = zoomRef.current!;
+      const zoomDom = operationLayerRef.current!;
       zoomDom.style.scale = '1';
       zoomDom.style.transform = '';
       setFile(null);
@@ -33,8 +35,8 @@ export default function Canvas() {
 
   useEffect(() => {
     const splitHandler = () => {
-      const canvas = canvasRef.current!;
-      const ctx = canvas.getContext('2d')!;
+      const canvas = getCanvas(canvasRef);
+      const ctx = getCtx(canvas);
       const imageData = getExtendImageData(ctx.getImageData(0, 0, canvas.width, canvas.height), ctx);
       const backupCanvas = backupCanvasRef.current!;
       const backCtx = backupCanvas.getContext('2d');
@@ -49,13 +51,13 @@ export default function Canvas() {
   }, []);
 
   useEffect(() => {
-    const zoomDom = zoomRef.current!;
+    const zoomDom = operationLayerRef.current!;
     zoomDom.style.scale = `${scale}`;
   }, [scale]);
 
   useEffect(() => {
     const exportImage = () => {
-      const canvas = canvasRef.current!;
+      const canvas = getCanvas(canvasRef);
       if (file) {
         canvas.toBlob((blob) => {
           if (blob) {
@@ -72,8 +74,8 @@ export default function Canvas() {
   }, [file])
 
   useEffect(() => {
-    const canvas = canvasRef.current!;
-    const ctx = canvas.getContext('2d')!;
+    const canvas = getCanvas(canvasRef);
+    const ctx = getCtx(canvas);
     if (file) {
       const img = new Image();
       img.onload = function() {
@@ -90,7 +92,7 @@ export default function Canvas() {
 
   return (
     <div className="canvas-container">
-      <div className="canvas-layer" ref={zoomRef}>
+      <div className="canvas-layer" ref={operationLayerRef}>
         <canvas ref={canvasRef}></canvas>
         <canvas ref={backupCanvasRef}></canvas>
       </div>

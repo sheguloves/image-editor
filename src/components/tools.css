@@ -7,6 +7,12 @@
   flex-direction: column;
 }
 
+.operation-active {
+  color: #0958d9;
+  border-color: #0958d9;
+  background: #ffffff;
+}
+
 .tool-item {
   display: flex;
   gap: 1rem;

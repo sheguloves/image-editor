@@ -1,7 +1,14 @@
+export const getCanvas = (ref: React.MutableRefObject<HTMLCanvasElement | null>) => {
+  return ref.current!;
+}
 
+export const getCtx = (canvas: HTMLCanvasElement) => {
+  return canvas.getContext('2d', { willReadFrequently: true })!;
+}
 
 export function getColorAt(ctx: CanvasRenderingContext2D, x: number, y: number) {
-  var pixelData = ctx.getImageData(x, y, 1, 1).data;
+  const imageData = ctx.getImageData(x, y, 1, 1);
+  const pixelData = imageData.data;
   return `rgba(${pixelData[0]},${pixelData[1]},${pixelData[2]},${pixelData[3]/255})`;
 }
 
