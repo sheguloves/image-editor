@@ -31,11 +31,14 @@ export default function Toolbar() {
         emit('clear');
       }}>Clear</Button>
       <Button disabled={!file} onClick={() => {
-        setScale(2);
+        setScale(1.2);
       }}>Zoom In</Button>
       <Button disabled={!file} onClick={() => {
-        setScale(0.5);
+        setScale(0.8);
       }}>Zoom Out</Button>
+      <Button disabled={!file} onClick={() => {
+        emit('split');
+      }}>Split & Concat</Button>
     </div>
   )
 }

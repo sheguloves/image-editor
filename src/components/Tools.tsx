@@ -33,6 +33,10 @@ export default function Tools() {
         <Button onClick={handler('eraser')}>Eraser</Button>
         <div ref={colorRef} className="eraser-size"></div>
       </div>
+      <div className="tool-item">
+        <Button onClick={handler('align')}>Eraser</Button>
+        <div ref={colorRef} className="eraser-size"></div>
+      </div>
     </fieldset>
   )
 }

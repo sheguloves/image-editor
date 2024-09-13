@@ -7,7 +7,7 @@ const cursorClasses = [
   'move',
 ]
 
-export default function useCursor() {
+export default function useCursor(dom: HTMLElement = document.body) {
 
   const { operation, setOperation } = useOperationState(state => state);
 
@@ -25,12 +25,10 @@ export default function useCursor() {
         break
     }
 
-    const body = document.body;
     const classList = cursorClasses.filter(item => item !== cursorClass);
-    console.log(classList);
-    body.classList.remove(...classList);
+    dom.classList.remove(...classList);
     if (cursorClass) {
-      body.classList.add(cursorClass);
+      dom.classList.add(cursorClass);
     }
   }, [operation]);
 

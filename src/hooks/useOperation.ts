@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useFileState, useOperationState, usePickedColorState } from "../store/stores";
-import { getColorAt } from "../utils/colorPicker";
+import { getColorAt } from "../utils/utils";
 
 let weight = 5;
 let lastTransform = {
@@ -26,8 +26,6 @@ function addMoveHandler(dom: HTMLCanvasElement) {
       x: parseInt(offsetX),
       y: parseInt(offsetY),
     };
-
-    console.log(lastTransform);
   }
 
   let lastPoint: {
