@@ -23,22 +23,22 @@ export default function Toolbar() {
 
   return (
     <div className="toolbar">
-      <Button onClick={importImage}>Import Image</Button>
+      <Button onClick={importImage}>导入图片</Button>
       <Button disabled={!file} onClick={() => {
         emit('export');
-      }}>Export Image</Button>
+      }}>导出图片</Button>
       <Button disabled={!file} onClick={() => {
         emit('clear');
-      }}>Clear</Button>
+      }}>清除</Button>
       <Button disabled={!file} onClick={() => {
-        setScale(1.2);
-      }}>Zoom In</Button>
+        setScale((scale) => scale + 0.1);
+      }}>放大</Button>
       <Button disabled={!file} onClick={() => {
-        setScale(0.8);
-      }}>Zoom Out</Button>
-      <Button disabled={!file} onClick={() => {
+        setScale((scale) => scale - 0.1);
+      }}>缩小</Button>
+      {/* <Button disabled={!file} onClick={() => {
         emit('split');
-      }}>Split & Concat</Button>
+      }}>Split & Concat</Button> */}
     </div>
   )
 }

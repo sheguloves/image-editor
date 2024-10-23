@@ -1,16 +1,17 @@
 .canvas-container {
-  flex: 1 1 auto;
   background-color: skyblue;
   border: 1px solid slateblue;
   overflow: hidden;
   position: relative;
+  width: 100%;
 }
 
 .canvas-layer {
   display: block;
-  min-height: 100%;
-  min-width: 100%;
   position: absolute;
+  transform-origin: center top;
+  min-width: 0px;
+  min-height: 0px;
 }
 
 .eraser {

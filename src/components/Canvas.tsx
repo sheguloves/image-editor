@@ -6,6 +6,7 @@ import { saveAs } from 'file-saver';
 import "./canvas.css";
 import { getCanvas, getCtx, getExtendImageData } from "../utils/utils";
 import useCursor from "../hooks/useCursor";
+import useFill from "../hooks/useFill";
 
 export default function Canvas() {
 
@@ -19,6 +20,7 @@ export default function Canvas() {
 
   useOperation(canvasRef);
   useCursor(operationLayerRef);
+  useFill(canvasRef);
 
   useEffect(() => {
     const clearHandler = () => {

@@ -5,7 +5,7 @@ interface FileState {
   setFile: (newFile: File | null) => void
 }
 
-export type OperationType = 'colorPicker' | 'eraser' | 'move' | 'align';
+export type OperationType = 'colorPicker' | 'eraser' | 'fill' | 'move' | 'align' | 'transition';
 
 interface OperationState {
   operation: OperationType,
@@ -49,15 +49,18 @@ export const usePickedColorState = create<PickerColorState>((set) => {
 
 interface ScaleState {
   scale: number;
-  setScale: (scale: number) => void;
+  setScale: (scale: number | ((scale: number) => number)) => void;
 }
 
 export const useScaleState = create<ScaleState>((set) => {
   return {
     scale: 1,
     setScale: scale => set((state) => {
+      if (typeof scale === 'number') {
+        scale = (scale) => scale;
+      }
       return {
-        scale: state.scale * scale,
+        scale: scale(state.scale),
       }
     })
   };

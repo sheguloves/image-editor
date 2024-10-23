@@ -23,8 +23,14 @@ export default function useCursor(domRef: React.MutableRefObject<HTMLElement | n
       case 'eraser':
         cursorClass = 'eraser';
         break;
+      case 'fill':
+        cursorClass = 'colorPicker';
+        break;
       case 'align':
         cursorClass = '';
+        break;
+      case 'transition':
+        cursorClass = 'colorPicker';
         break;
       default:
         cursorClass = 'move';
