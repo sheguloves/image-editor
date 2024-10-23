@@ -6,12 +6,10 @@
   width: 100%;
 }
 
-.canvas-layer {
-  display: block;
+.canvas-container canvas {
   position: absolute;
+  pointer-events: none;
   transform-origin: center top;
-  min-width: 0px;
-  min-height: 0px;
 }
 
 .eraser {
@@ -24,13 +22,3 @@
 .move {
   cursor: move;
 }
-
-/* .canvas image {
-  height: 50%;
-  width: 50%;
-} */
-
-/* .canvas canvas {
-  height: 100%;
-  width: 100%;
-} */

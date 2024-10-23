@@ -55,12 +55,18 @@ interface ScaleState {
 export const useScaleState = create<ScaleState>((set) => {
   return {
     scale: 1,
-    setScale: scale => set((state) => {
-      if (typeof scale === 'number') {
-        scale = (scale) => scale;
+    setScale: value => set((state) => {
+      if (typeof value === 'number') {
+        return {
+          scale: value,
+        }
+      } else if (typeof value === 'function'){
+        return {
+          scale: value(state.scale),
+        }
       }
       return {
-        scale: scale(state.scale),
+        scale: state.scale,
       }
     })
   };

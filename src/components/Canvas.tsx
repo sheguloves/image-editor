@@ -7,6 +7,7 @@ import "./canvas.css";
 import { getCanvas, getCtx, getExtendImageData } from "../utils/utils";
 import useCursor from "../hooks/useCursor";
 import useFill from "../hooks/useFill";
+import useMove from "../hooks/useMove";
 
 export default function Canvas() {
 
@@ -16,17 +17,16 @@ export default function Canvas() {
   const operationLayerRef = useRef<HTMLDivElement>(null);
   const { on, off } = useEvents();
 
-  const scale = useScaleState(state => state.scale);
+  const { scale, setScale } = useScaleState(state => state);
 
   useOperation(canvasRef);
   useCursor(operationLayerRef);
   useFill(canvasRef);
+  useMove(operationLayerRef, canvasRef);
 
   useEffect(() => {
     const clearHandler = () => {
-      const zoomDom = operationLayerRef.current!;
-      zoomDom.style.scale = '1';
-      zoomDom.style.transform = '';
+      setScale(1);
       setFile(null);
     }
     on('clear', clearHandler);
@@ -53,7 +53,7 @@ export default function Canvas() {
   }, []);
 
   useEffect(() => {
-    const zoomDom = operationLayerRef.current!;
+    const zoomDom = canvasRef.current!;
     zoomDom.style.scale = `${scale}`;
   }, [scale]);
 
@@ -93,11 +93,9 @@ export default function Canvas() {
   }, [file]);
 
   return (
-    <div className="canvas-container">
-      <div className="canvas-layer" ref={operationLayerRef}>
-        <canvas ref={canvasRef}></canvas>
-        <canvas ref={backupCanvasRef}></canvas>
-      </div>
+    <div className="canvas-container" ref={operationLayerRef}>
+      <canvas ref={canvasRef}></canvas>
+      <canvas ref={backupCanvasRef}></canvas>
     </div>
   )
 }

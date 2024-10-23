@@ -3,69 +3,6 @@ import { useFileState, useOperationState, usePickedColorState } from "../store/s
 import { getColorAt, getCtx } from "../utils/utils";
 
 let weight = 5;
-let lastTransform = {
-  x: 0,
-  y: 0,
-};
-
-function addMoveHandler(dom: HTMLCanvasElement) {
-  const parentDom = dom.parentElement!.parentElement!;
-  const movementLayer = dom.parentElement!;
-  let start = false;
-  const mouseDownHandler = () => {
-    lastPoint = null;
-    start = true;
-  }
-  const mouseUpHandler = () => {
-    start = false;
-    let transform = movementLayer.style.transform;
-    transform = transform.replace('translate(', '');
-    transform = transform.replace(/px/ig, '');
-    transform = transform.replace(')', '');
-    const [ offsetX, offsetY ] = transform.split(',');
-    lastTransform = {
-      x: parseInt(offsetX),
-      y: parseInt(offsetY),
-    };
-  }
-
-  let lastPoint: {
-    x: number;
-    y: number;
-  } | null = null;
-
-  const mouseMoveHandler = (e: MouseEvent) => {
-    if (start) {
-      const { pageX, pageY } = e;
-
-      if (lastPoint) {
-        const offsetX = pageX - lastPoint.x + lastTransform.x;
-        const offsetY = pageY - lastPoint.y + lastTransform.y;
-        movementLayer.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-      } else {
-        lastPoint = {
-          x: pageX,
-          y: pageY
-        };
-      }
-    }
-  }
-
-  const mouseoutHandler = () => {
-    start = false;
-  }
-  parentDom.addEventListener('mouseout', mouseoutHandler);
-  parentDom.addEventListener('mousedown', mouseDownHandler);
-  parentDom.addEventListener('mousemove', mouseMoveHandler);
-  parentDom.addEventListener('mouseup', mouseUpHandler);
-
-  return () => {
-    parentDom.removeEventListener('mouseout', mouseoutHandler);
-    parentDom.removeEventListener('mousedown', mouseDownHandler);
-    parentDom.removeEventListener('mousemove', mouseMoveHandler);
-    parentDom.removeEventListener('mouseup', mouseUpHandler);
-  }
-}
 
 function addEraserEventHandler(dom: HTMLCanvasElement, strokeStyle: string) {
   let start = false;
@@ -196,14 +133,6 @@ const addAlingEventHandler = (dom: HTMLCanvasElement) => {
 export default function useOperation(domRef: React.RefObject<HTMLElement>) {
   const operation = useOperationState(state => state.operation);
   const { color, setColor } = usePickedColorState(state => state);
-  const file = useFileState(state => state.file);
-
-  useEffect(() => {
-    lastTransform = {
-      x: 0,
-      y: 0,
-    };
-  }, [file]);
 
   let callback = () => {};
 
@@ -212,9 +141,6 @@ export default function useOperation(domRef: React.RefObject<HTMLElement>) {
       clearLastRect();
     }
     switch(operation) {
-      case 'move':
-        callback = addMoveHandler(domRef.current! as HTMLCanvasElement);
-        break;
       case "colorPicker":
         callback = addColorPickerEventHandler(domRef.current! as HTMLCanvasElement, setColor)
         break;
