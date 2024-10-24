@@ -8,8 +8,11 @@
 
 .canvas-container canvas {
   position: absolute;
-  pointer-events: none;
   transform-origin: center top;
+}
+
+.backup-canvas {
+  display: none;
 }
 
 .eraser {

@@ -5,7 +5,7 @@ interface FileState {
   setFile: (newFile: File | null) => void
 }
 
-export type OperationType = 'colorPicker' | 'eraser' | 'fill' | 'move' | 'align' | 'transition';
+export type OperationType = 'colorPicker' | 'eraser' | 'fill' | 'move' | 'align' | 'transition-x' | 'transition-y';
 
 interface OperationState {
   operation: OperationType,

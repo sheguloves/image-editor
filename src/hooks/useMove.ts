@@ -45,7 +45,7 @@ function addMoveHandler(listener: HTMLElement, mover: HTMLElement, scale: number
   }
 
   const mouseoutHandler = () => {
-    mouseUpHandler();
+    // mouseUpHandler();
   }
   listener.addEventListener('mouseout', mouseoutHandler);
   listener.addEventListener('mousedown', mouseDownHandler);

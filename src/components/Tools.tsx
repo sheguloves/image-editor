@@ -40,8 +40,13 @@ export default function Tools() {
           onClick={handler('fill')} title="将选中的区域填充为选择的颜色">填充模式</Button>
       </div>
       <div className="tool-item">
-        <Button className={operation === 'transition' ? 'operation-active': ''}
-          onClick={handler('transition')} title="颜色过渡">过渡模式</Button>
+        <Button className={operation === 'transition-x' ? 'operation-active': ''}
+          onClick={handler('transition-x')} title="颜色过渡">水平过渡</Button>
+        <div></div>
+      </div>
+      <div className="tool-item">
+        <Button className={operation === 'transition-y' ? 'operation-active': ''}
+          onClick={handler('transition-y')} title="颜色过渡">垂直过渡</Button>
         <div></div>
       </div>
       <div className="tool-item">

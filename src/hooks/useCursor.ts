@@ -29,7 +29,8 @@ export default function useCursor(domRef: React.MutableRefObject<HTMLElement | n
       case 'align':
         cursorClass = '';
         break;
-      case 'transition':
+      case 'transition-x':
+      case 'transition-y':
         cursorClass = 'colorPicker';
         break;
       default:

@@ -28,8 +28,8 @@ const addFillEventHandler = (canvas: HTMLCanvasElement, color: string, scale: nu
   let start = false;
   const mouseDownHandler = (e: MouseEvent) => {
     const rect = parentDom.getBoundingClientRect();
-    x1 = (e.clientX - rect.left) / scale;
-    y1 = (e.clientY - rect.top) / scale;
+    x1 = e.pageX - rect.left;
+    y1 = e.pageY - rect.top;
     if (lastRect) {
       clearLastRect();
     }
@@ -39,8 +39,8 @@ const addFillEventHandler = (canvas: HTMLCanvasElement, color: string, scale: nu
   const mouseMoveHandler = (e: MouseEvent) => {
     if (start) {
       const rect = parentDom.getBoundingClientRect();
-      const x2 = (e.clientX - rect.x) / scale;
-      const y2 = (e.clientY - rect.top) / scale;
+      const x2 = e.pageX - rect.left;
+      const y2 = e.pageY - rect.top;
       if (lastRect) {
         lastRect.style.left = `${x2 > x1 ? x1 : x2}px`;
         lastRect.style.top = `${y2 > y1 ? y1: y2}px`;
@@ -85,7 +85,7 @@ function fillRect(canvas: HTMLCanvasElement, rect: DOMRect, color: string, scale
   }
 }
 
-export default function useOperation(domRef: React.RefObject<HTMLCanvasElement>) {
+export default function useFill(domRef: React.RefObject<HTMLCanvasElement>) {
   const operation = useOperationState(state => state.operation);
   const { color } = usePickedColorState(state => state);
   const { file } = useFileState(state => state);

@@ -8,6 +8,7 @@ import { getCanvas, getCtx, getExtendImageData } from "../utils/utils";
 import useCursor from "../hooks/useCursor";
 import useFill from "../hooks/useFill";
 import useMove from "../hooks/useMove";
+import useColorTransition from "../hooks/useColorTransition";
 
 export default function Canvas() {
 
@@ -23,6 +24,7 @@ export default function Canvas() {
   useCursor(operationLayerRef);
   useFill(canvasRef);
   useMove(operationLayerRef, canvasRef);
+  useColorTransition(operationLayerRef, canvasRef);
 
   useEffect(() => {
     const clearHandler = () => {
@@ -95,7 +97,7 @@ export default function Canvas() {
   return (
     <div className="canvas-container" ref={operationLayerRef}>
       <canvas ref={canvasRef}></canvas>
-      <canvas ref={backupCanvasRef}></canvas>
+      <canvas className="backup-canvas" ref={backupCanvasRef}></canvas>
     </div>
   )
 }
