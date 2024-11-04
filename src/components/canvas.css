@@ -16,7 +16,7 @@
 }
 
 .eraser {
-  cursor: url('../assets/eraser.png') 5 10, pointer;
+  cursor: cell;
 }
 .colorPicker {
   cursor: crosshair;

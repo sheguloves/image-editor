@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useFileState, useOperationState, usePickedColorState, useScaleState } from "../store/stores";
+import { getCtx } from "../utils/utils";
 
 const createLastRect = (x: number, y: number, width: number, height: number, parentDom: HTMLElement) => {
   const div = document.createElement('div');
@@ -21,7 +22,7 @@ const clearLastRect = () => {
   }
 }
 
-const addFillEventHandler = (canvas: HTMLCanvasElement, color: string, scale: number) => {
+const listenFill = (canvas: HTMLCanvasElement, color: string, scale: number) => {
   const parentDom = canvas.parentElement!;
 
   let x1 = 0, y1 = 0;
@@ -52,11 +53,8 @@ const addFillEventHandler = (canvas: HTMLCanvasElement, color: string, scale: nu
   const mouseUpHandler = () => {
     start = false;
     if (lastRect) {
-      const result = confirm('确定要将区域填充为选中的颜色吗?');
-      if (result) {
-        fillRect(canvas, lastRect.getBoundingClientRect(), color, scale);
-        clearLastRect();
-      }
+      fillRect(canvas, lastRect.getBoundingClientRect(), color, scale);
+      clearLastRect();
     }
   }
 
@@ -73,7 +71,7 @@ const addFillEventHandler = (canvas: HTMLCanvasElement, color: string, scale: nu
 
 function fillRect(canvas: HTMLCanvasElement, rect: DOMRect, color: string, scale: number) {
   const canvasRect = canvas.getBoundingClientRect();
-  const ctx = canvas.getContext('2d');
+  const ctx = getCtx(canvas);
 
   if (ctx) {
     const x = (rect.x - canvasRect.x) / scale;
@@ -85,7 +83,7 @@ function fillRect(canvas: HTMLCanvasElement, rect: DOMRect, color: string, scale
   }
 }
 
-export default function useFill(domRef: React.RefObject<HTMLCanvasElement>) {
+export default function useFill(canvasRef: React.RefObject<HTMLCanvasElement>) {
   const operation = useOperationState(state => state.operation);
   const { color } = usePickedColorState(state => state);
   const { file } = useFileState(state => state);
@@ -99,7 +97,7 @@ export default function useFill(domRef: React.RefObject<HTMLCanvasElement>) {
 
   useEffect(() => {
     if (operation === 'fill') {
-      callback = addFillEventHandler(domRef.current!, color, scale);
+      callback = listenFill(canvasRef.current!, color, scale);
     } else {
       clearLastRect();
     }

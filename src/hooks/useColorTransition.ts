@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useFileState, useOperationState, useScaleState } from "../store/stores";
+import { getCtx } from "../utils/utils";
 
 type DIRECTION = 'horizontal' | 'vertical';
 
@@ -8,6 +9,13 @@ interface Rect {
   y: number;
   width: number;
   height: number;
+}
+
+interface Color {
+  r: number;
+  g: number;
+  b: number;
+  a: number;
 }
 
 const createLastRect = (x: number, y: number, width: number, height: number, parentDom: HTMLElement) => {
@@ -30,7 +38,7 @@ const clearLastRect = () => {
   }
 }
 
-const addTransitionEventHandler = (container: HTMLElement, canvas: HTMLCanvasElement, direction: DIRECTION, scale: number) => {
+const listenTransition = (container: HTMLElement, canvas: HTMLCanvasElement, direction: DIRECTION, scale: number) => {
   let x1 = 0, y1 = 0;
   let start = false;
   const mouseDownHandler = (e: MouseEvent) => {
@@ -61,11 +69,8 @@ const addTransitionEventHandler = (container: HTMLElement, canvas: HTMLCanvasEle
     if (lastRect) {
       const rect = getFillRect(canvas, lastRect.getBoundingClientRect());
       if (rect) {
-        const result = confirm(`确定要将区域颜色${direction === 'vertical' ? '垂直' : '水平'}过渡吗?`);
-        if (result) {
-          fillRect(canvas, rect, direction, scale);
-          clearLastRect();
-        }
+        fillRect(canvas, rect, direction, scale);
+        clearLastRect();
       }
     }
   }
@@ -110,64 +115,135 @@ function getFillRect(canvas: HTMLCanvasElement, rect: DOMRect): Rect | null {
   }
 }
 
-function _verticalTransition(canvas: HTMLCanvasElement, rect: Rect, scale: number) {
-
+function scaleRect(rect: Rect, scale: number) {
+  rect.x = Math.round(rect.x / scale);
+  rect.y = Math.round(rect.y / scale);
+  rect.width = Math.round(rect.width / scale);
+  rect.height = Math.round(rect.height / scale);
 }
 
-function _horizontalTransition(canvas: HTMLCanvasElement, rect: Rect, scale: number) {
-  const ctx = canvas.getContext('2d')!;
-  const [ x, y, width, height ] = [
-    Math.round(rect.x / scale), Math.round(rect.y / scale),
-    Math.round(rect.width / scale), Math.round(rect.height / scale)];
+function getStepedColor(color: Color, step: Color, endColor: Color) {
+  return {
+    r: getStepColorItem(color.r, step.r, endColor.r),
+    g: getStepColorItem(color.g, step.g, endColor.g),
+    b: getStepColorItem(color.b, step.b, endColor.b),
+    a: getStepColorItem(color.a, step.a, endColor.a),
+  }
+}
+
+function getStepColorItem(color: number, step: number, limit = 255) {
+  let result = color + step;
+  if (step > 0) {
+    result = result > limit ? limit : result;
+  } else if (step < 0) {
+    result = result < limit ? limit : result;
+  }
+  result = Math.round(result)
+  if (result < 0) {
+    result = 0;
+  } else if (result > 255) {
+    result = 255;
+  }
+  return result;
+}
+
+function patchColorData(imageData: ImageData, index: number, color: Color) {
+  const { r, g, b, a} = color;
+  [ imageData.data[index],
+    imageData.data[index + 1],
+    imageData.data[index + 2],
+    imageData.data[index + 3]] = [r, g, b, a];
+}
+
+
+function _verticalTransition(canvas: HTMLCanvasElement, rect: Rect) {
+  const ctx = getCtx(canvas);
+  const { x, y, width, height } = rect;
   const oriImageData = ctx.getImageData(x, y, width, height);
   const result = ctx.createImageData(width, height, {
     colorSpace: oriImageData.colorSpace,
   });
 
-  for (let h = 0; h < height; h++) {
-    const rowBegin = h * width;
-    const i = rowBegin * 4;
-    const [ls, lr, lg, lb] = [
-      oriImageData.data[i], oriImageData.data[i + 1],
-      oriImageData.data[i + 2], oriImageData.data[i + 3]];
-
-    const rowEnd = rowBegin + width - 1;
-    const j = rowEnd * 4;
-    const [rs, rr, rg, rb] = [
-      oriImageData.data[j], oriImageData.data[j + 1],
-      oriImageData.data[j + 2], oriImageData.data[j + 3]];
-    const sstep = (rs - ls) / width;
-    const rstep = (rr - lr) / width;
-    const gstep = (rg - lg) / width;
-    const bstep = (rb - lb) / width;
-    for (let ind = 0; ind < width - 1; ind++) {
-      result.data[i + ind * 4] = Math.round(ls + ind * sstep);
-      result.data[i + ind * 4 + 1] = Math.round(lr + ind * rstep);
-      result.data[i + ind * 4 + 2] = Math.round(lg + ind * gstep);
-      result.data[i + ind * 4 + 3] = Math.round(lb + ind * bstep);
-      // result.data[ind * 4] = 255;
-      // result.data[ind * 4 + 1] = 255;
-      // result.data[ind * 4 + 2] = 255;
-      // result.data[ind * 4 + 3] = 255;
+  for(let col = 0; col < width; col++) {
+    const colorBeginIndex = col * 4;
+    const colorEndIndex = width * (height - 1) * 4 + colorBeginIndex;
+    const beginColor = {
+      r: oriImageData.data[colorBeginIndex],
+      g: oriImageData.data[colorBeginIndex + 1],
+      b: oriImageData.data[colorBeginIndex + 2],
+      a: oriImageData.data[colorBeginIndex + 3]
     }
-    result.data[j] = rs;
-    result.data[j + 1] = rr;
-    result.data[j + 2] = rg;
-    result.data[j + 3] = rb;
+    const endColor = {
+      r: oriImageData.data[colorEndIndex],
+      g: oriImageData.data[colorEndIndex + 1],
+      b: oriImageData.data[colorEndIndex + 2],
+      a: oriImageData.data[colorEndIndex + 3]
+    }
+    const stepColor = {
+      r: (endColor.r - beginColor.r) / height,
+      g: (endColor.g - beginColor.g) / height,
+      b: (endColor.b - beginColor.b) / height,
+      a: (endColor.a - beginColor.a) / height,
+    }
+    console.log(stepColor, beginColor, endColor);
+    let currentColor = { ...beginColor };
+    patchColorData(result, colorBeginIndex, beginColor);
+    for(let row = 1; row < height; row++) {
+      currentColor = getStepedColor(currentColor, stepColor, endColor);
+      patchColorData(result, colorBeginIndex + (row * width * 4), currentColor);
+    }
   }
-  console.log(oriImageData);
-  console.log(result);
-  // ctx.clearRect(rect.x, rect.y, rect.width, rect.height);
+  ctx.putImageData(result, x, y);
+}
+
+function _horizontalTransition(canvas: HTMLCanvasElement, rect: Rect) {
+  const ctx = getCtx(canvas);
+  const { x, y, width, height } = rect;
+  const oriImageData = ctx.getImageData(x, y, width, height);
+  const result = ctx.createImageData(width, height, {
+    colorSpace: oriImageData.colorSpace,
+  });
+
+  for (let row = 0; row < height; row++) {
+    const colorBeginIndex = row * width * 4;
+    const beginColor = {
+      r: oriImageData.data[colorBeginIndex],
+      g: oriImageData.data[colorBeginIndex + 1],
+      b: oriImageData.data[colorBeginIndex + 2],
+      a: oriImageData.data[colorBeginIndex + 3]
+    }
+    const colorEndIndex = colorBeginIndex + (width - 1) * 4;
+    const endColor = {
+      r: oriImageData.data[colorEndIndex],
+      g: oriImageData.data[colorEndIndex + 1],
+      b: oriImageData.data[colorEndIndex + 2],
+      a: oriImageData.data[colorEndIndex + 3]
+    }
+    const stepColor = {
+      r: (endColor.r - beginColor.r) / width,
+      g: (endColor.g - beginColor.g) / width,
+      b: (endColor.b - beginColor.b) / width,
+      a: (endColor.a - beginColor.a) / width,
+    }
+    console.log(stepColor);
+    let currentColor = { ...beginColor };
+    patchColorData(result, colorBeginIndex, beginColor);
+    for (let col = 1; col < width; col++) {
+      currentColor = getStepedColor(currentColor, stepColor, endColor);
+      patchColorData(result, colorBeginIndex + (col * 4), currentColor);
+    }
+  }
   ctx.putImageData(result, x, y);
 }
 
 function fillRect(canvas: HTMLCanvasElement, rect: Rect, direction: DIRECTION, scale: number) {
+  scaleRect(rect, scale);
   switch(direction) {
     case 'horizontal':
-      _horizontalTransition(canvas, rect, scale);
+      _horizontalTransition(canvas, rect);
       break;
     case 'vertical':
-      _verticalTransition(canvas, rect, scale);
+      _verticalTransition(canvas, rect);
       break;
   }
 }
@@ -186,7 +262,7 @@ export default function useColorTransition(container: React.RefObject<HTMLElemen
   useEffect(() => {
     if (operation === 'transition-x' || operation === 'transition-y') {
       const direction = operation === 'transition-y' ? 'vertical' : 'horizontal';
-      callback = addTransitionEventHandler(container.current!, canvasRef.current!, direction, scale);
+      callback = listenTransition(container.current!, canvasRef.current!, direction, scale);
     } else {
       clearLastRect();
     }

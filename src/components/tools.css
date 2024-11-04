@@ -5,6 +5,7 @@
   justify-content: stretch;
   gap: 1rem;
   flex-direction: column;
+  overflow: auto;
 }
 
 .operation-active {

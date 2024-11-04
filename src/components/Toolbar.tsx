@@ -36,9 +36,6 @@ export default function Toolbar() {
       <Button disabled={!file} onClick={() => {
         setScale((scale) => scale - 0.1);
       }}>缩小</Button>
-      {/* <Button disabled={!file} onClick={() => {
-        emit('split');
-      }}>Split & Concat</Button> */}
     </div>
   )
 }
